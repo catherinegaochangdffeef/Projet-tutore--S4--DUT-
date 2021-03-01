@@ -43,9 +43,8 @@ let rec string_of_dominoes = function
 ;;
 
 let string_of_state = function
-  | ([], _) -> ""
-  | (x, H n) -> string_of_player(H n) ^ " " ^ string_of_dominoes(x)
-  | (x, B n) -> string_of_player(B n) ^ " " ^ string_of_dominoes(x)
+  | ([], p) -> string_of_player(p) ^ " " 
+  | (x, p) -> string_of_player(p) ^ " " ^ string_of_dominoes(x)
  ;;
  
  let string_of_chain = function
