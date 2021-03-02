@@ -67,7 +67,13 @@ type player = H of int | B of int;;
   | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
   ;;
 
-  (* take *)
+  let rec take l1 n l2 = 
+  match (l1, n, l2) with 
+    |(l1, n, []) -> (l1, [])
+    |(l1, 0, l2) -> (l1, l2)
+    |(l1, n, (D(x,y))::l) -> take ((D(x,y))::l1) (n-1) l
+  ;;
+  
   (* move *)
 
   let rec string_of_dominoes = function 
