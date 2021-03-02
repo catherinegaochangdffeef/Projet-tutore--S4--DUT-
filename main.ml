@@ -104,9 +104,7 @@ type player = H of int | B of int;;
     | _ -> ""
   ;;
 
-  let string_of_state = function
-    | ([], p) -> string_of_player(p) ^ " " 
-    | (x, p) -> string_of_player(p) ^ " " ^ string_of_dominoes(x)
+ let string_of_state (x, p)= string_of_player(p) ^ ":\t" ^ string_of_dominoes(x)
   ;;
 
   (* list_shuffle *)
