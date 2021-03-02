@@ -123,7 +123,11 @@ type player = H of int | B of int;;
 
  let string_of_state (x, p)= string_of_player(p) ^ ":\t" ^ string_of_dominoes(x)
   ;;
-
-  (* list_shuffle *)
+  
+ let list_shuffle ls =
+    let x = List.map (function y -> (Random.bits (), y)) ls in
+      let comparList = List.sort compare x in
+        List.map snd comparList
+ ;;       
 
   (* play *)
