@@ -72,7 +72,6 @@ type player = H of int | B of int;;
   ;;
 
 (* SECTION 4 : Mise en place d'une partie *)
-  (* make_dominoes *)
 
   let char_list_of_string str =
     let rec urs n l =
@@ -95,6 +94,15 @@ type player = H of int | B of int;;
     in urs (String.length str - 1) []
   ;;
   
+  let make_dominoes x =
+      let rec urs l x = 
+        function
+        | 0 when x=0 -> (l @ [D(0,0)])
+        | 0 -> urs (l @ [D(x,0)]) (x-1) (x-1)
+        | y -> urs (l @ [D(x,y)]) x (y-1)
+      in urs [] x x;;
+
+     
   (* get_hand_size *)
   (* make_state_list *)
 
