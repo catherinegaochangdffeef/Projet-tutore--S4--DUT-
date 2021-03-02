@@ -50,7 +50,11 @@ type player = H of int | B of int;;
     in
     print_endline prompt; urs ();;
 
-  (* suppress *)
+  
+    let rec suppress c cd =
+      match cd with
+      |[]->[]
+      |h::t -> if c=h || flip(c)=h then t else h::(suppress c t)
   (* input_move *)
   (* input_bot_move *)
   (* input_human_move *)
@@ -102,8 +106,13 @@ type player = H of int | B of int;;
         | y -> urs (l @ [D(x,y)]) x (y-1)
       in urs [] x x;;
 
-     
-  (* get_hand_size *)
+  let get_hand_size = function
+    | 2 -> 7
+    | 3 -> 6
+    | 4 -> 6
+    | _ -> failwith "Entre 2 et 4 joueurs, please!"
+  ;;
+   
   (* make_state_list *)
 
 (* SECTION 5 : Jeu proprement dit *)
