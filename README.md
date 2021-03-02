@@ -45,7 +45,7 @@ Organisation des fonctions :
 *est la spécialisation « bot » de `input_move`, avec la même sémantique pour les deux derniers arguments et le résultat.*  
 
 - **input_human_move** : chain -> domino list -> (domino list * chain) option = \<fun>  
-*est la spécialisation « human » de input_move, avec la même sémantique pour les deux derniers arguments et le résultat.*  
+*est la spécialisation « human » de `input_move`, avec la même sémantique pour les deux derniers arguments et le résultat.*  
 
 
 ### 3. Gestion complète d'un coup, avec affichages et pioche éventuelle
@@ -81,7 +81,7 @@ Organisation des fonctions :
 *envoie le nombre de dominos dans la main initiale d'un joueur en fonction du nombre de ceux-ci. Elle doit échouer avec le message ``"Entre 2 et 4 joueurs, please!"`` pour tout autre entier que 2, 3 et 4.*  
 
 - **make_state_list** : string -> domino list -> domino list * (domino list * player) list = \<fun>  
-*prend une chaîne formée de caractères B et H, et la liste des dominos du jeu (résultat de ``make_dominoes``), et construit le talon initial, ainsi que la liste des états initiaux, un état étant le couple formé par un joueur et sa main. *  
+*prend une chaîne formée de caractères B et H, et la liste des dominos du jeu (résultat de ``make_dominoes``), et construit le talon initial, ainsi que la liste des états initiaux, un état étant le couple formé par un joueur et sa main.*  
 
 
 ### 5. Jeu proprement dit
