@@ -73,18 +73,27 @@ type player = H of int | B of int;;
 
 (* SECTION 4 : Mise en place d'une partie *)
   (* make_dominoes *)
-  (* char_list_of_string *)
+
+  let char_list_of_string str =
+    let rec urs n l =
+      if n < 0 then 
+        l 
+      else 
+        urs (n-1) (str.[n]::l) 
+    in urs (String.length str - 1) []
+  ;;
 
   let players_of_string str =
-  let rec urs n l =
-  if n < 0 then 
-      l 
-  else 
-    match str.[n] with
-    |'B' -> urs (n-1) ([B (n+1)] @ l) 
-    |'H' -> urs (n-1) ([H (n+1)] @ l) 
-    | _ -> failwith "Le joueur ne peut etre qu'un Humain ou un Bot"
-  in urs (String.length str - 1) []
+    let rec urs n l =
+      if n < 0 then 
+        l 
+      else 
+        match str.[n] with
+        |'B' -> urs (n-1) ([B (n+1)] @ l) 
+        |'H' -> urs (n-1) ([H (n+1)] @ l) 
+        | _ -> failwith "Le joueur ne peut etre qu'un Humain ou un Bot"
+    in urs (String.length str - 1) []
+  ;;
   
   (* get_hand_size *)
   (* make_state_list *)
