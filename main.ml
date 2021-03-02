@@ -41,9 +41,7 @@ let rec string_of_dominoes = function
   |D(x, y)::l -> (string_of_int x)^"-"^(string_of_int y)^" "^( string_of_dominoes l)
 ;;
 
-let string_of_state = function
-  | ([], p) -> string_of_player(p) ^ " " 
-  | (x, p) -> string_of_player(p) ^ " " ^ string_of_dominoes(x)
+let string_of_state (x, p)= string_of_player(p) ^ " " ^ string_of_dominoes(x)
 ;;
  
  let string_of_chain = function
