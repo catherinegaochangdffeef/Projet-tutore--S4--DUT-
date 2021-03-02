@@ -32,7 +32,7 @@ type player = H of int | B of int;;
       |D(a,b) when b=z -> append(flip c, cd,'>')::[]
       |_->[];;
 
-   let rec possible_dominos lst cd =
+   let rec possible_dominoes lst cd =
    match lst with 
    |[]->[]
    |dlst::rstlst-> if (legal_adds dlst cd)!=[] then dlst::(possible_dominos rstlst cd) else possible_dominos rstlst cd
