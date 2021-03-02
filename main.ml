@@ -35,7 +35,7 @@ type player = H of int | B of int;;
    let rec possible_dominoes lst cd =
    match lst with 
    |[]->[]
-   |dlst::rstlst-> if (legal_adds dlst cd)!=[] then dlst::(possible_dominos rstlst cd) else possible_dominos rstlst cd
+   |dlst::rstlst-> if (legal_adds dlst cd)!=[] then dlst::(possible_dominoes rstlst cd) else possible_dominoes rstlst cd
 
 
 
