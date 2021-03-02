@@ -51,10 +51,10 @@ type player = H of int | B of int;;
     print_endline prompt; urs ();;
 
   
-  let rec suppress c cd =
-    match cd with
-    |[]->[]
-    |h::t -> if c=h || flip(c)=h then t else suppress c t
+    let rec suppress c cd =
+      match cd with
+      |[]->[]
+      |h::t -> if c=h || flip(c)=h then t else h::(suppress c t)
   (* input_move *)
   (* input_bot_move *)
   (* input_human_move *)
