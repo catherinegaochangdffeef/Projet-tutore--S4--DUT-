@@ -22,13 +22,14 @@ let append (D (d1,d2), chain, char) =
     | (D (_,d2), S (debut, str, _), '>') -> S (debut, str ^ " " ^ concaten , d2)
     | (_,_,_) -> E
 
-let legal_adds (D(d1,d2)) chain =
-  let concaten = ((string_of_int d1)^"-"^ (string_of_int d2)) in
-  let concaten2=((string_of_int d2)^"-"^ (string_of_int d1)) in
-   match (D(d1,d2)) chain  with
-   |(D(d1,d2))   E -> [S(d1,concaten,d2)]
-   |(D(d1,d2)) (S(debut,str,fin)) when debut=d1 ->[S(d2,concaten2 ^ " " ^ str , fin )]
-   |(D(d1,d2)) (S(debut,str,fin)) when debut=d2 ->[S(d1,concaten ^ " " ^ str , fin )]
-   |(D(d1,d2)) (S(debut,str,fin)) when debut=d1 && fin=d2 ->[S(d2,concaten2 ^ " " ^ str , d2 );
-   S(d1, str^ " " ^ concaten2 , d1 )]
-   |(D(_,_)) _ ->[]
+let legal_adds c cd = 
+match cd with 
+|E->(append(c,E,'>'))::[]
+|S(x,y,z)->match c with 
+    |D(a,b) when(b=x && a=z)&& a!=b ->append(c,cd,'<')::append(c,cd,'>')::[]
+    |D(a,b) when (a=x && b=z)&&a!=b -> append(flip c, cd,'<')::append(flip c, cd,'>')::[]
+    |D(a,b) when b=x -> append(c,cd,'<')::[]
+    |D(a,b) when a=x -> append(flip c,cd,'<')::[]
+    |D(a,b) when a = z -> append(c,cd,'>')::[]
+    |D(a,b) when b=z -> append(flip c, cd,'>')::[]
+    |_->[];;
