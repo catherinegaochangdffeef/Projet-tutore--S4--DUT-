@@ -58,10 +58,10 @@ type player = H of int | B of int;;
 (* SECTION 3 : Gestion complète d'un coup, avec affichages et pioche éventuelle *)
   
   let string_of_player = function 
-    | H n when (1 <= n && n <= 4)-> "Joueur " ^ (string_of_int n) ^ " (humain)"
-    | B n when (1 <= n && n <= 4)-> "Joueur " ^ (string_of_int n) ^ " (bot)"
-    | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
-    ;;
+  | H n when (1 <= n && n <= 4)-> "Joueur " ^ (string_of_int n) ^ " (humain)"
+  | B n when (1 <= n && n <= 4)-> "Joueur " ^ (string_of_int n) ^ " (bot)   "
+  | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
+  ;;
 
   (* take *)
   (* move *)
@@ -69,7 +69,7 @@ type player = H of int | B of int;;
   let rec string_of_dominoes = function 
   |[] -> ""
   |D(x, y)::l -> String.trim((string_of_int x)^"-"^(string_of_int y)^" "^( string_of_dominoes l))
-
+  ;;
 
 (* SECTION 4 : Mise en place d'une partie *)
   (* make_dominoes *)
