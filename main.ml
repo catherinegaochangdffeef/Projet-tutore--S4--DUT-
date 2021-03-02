@@ -67,9 +67,8 @@ type player = H of int | B of int;;
   (* move *)
 
   let rec string_of_dominoes = function 
-    |[] -> ""
-    |D(x, y)::l -> (string_of_int x)^"-"^(string_of_int y)^" "^( string_of_dominoes l)
-  ;;
+  |[] -> ""
+  |D(x, y)::l -> String.trim((string_of_int x)^"-"^(string_of_int y)^" "^( string_of_dominoes l))
 
 
 (* SECTION 4 : Mise en place d'une partie *)
