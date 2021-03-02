@@ -30,6 +30,19 @@ let append (D (d1,d2), chain, char) =
     | (_,_,_) -> E
   ;;
   
+let legal_adds c cd = 
+match cd with 
+|E->(append(c,E,'>'))::[]
+|S(x,y,z)->match c with 
+    |D(a,b) when(b=x && a=z)&& a!=b ->append(c,cd,'<')::append(c,cd,'>')::[]
+    |D(a,b) when (a=x && b=z)&&a!=b -> append(flip c, cd,'<')::append(flip c, cd,'>')::[]
+    |D(a,b) when b=x -> append(c,cd,'<')::[]
+    |D(a,b) when a=x -> append(flip c,cd,'<')::[]
+    |D(a,b) when a = z -> append(c,cd,'>')::[]
+    |D(a,b) when b=z -> append(flip c, cd,'>')::[]
+    |_->[]
+    ;;
+
  let string_of_player = function 
   | H n when (1 <= n && n <= 4)-> "Joueur " ^ (string_of_int n) ^ " (humain)"
   | B n when (1 <= n && n <= 4)-> "Joueur " ^ (string_of_int n) ^ " (bot)"
@@ -41,9 +54,7 @@ let rec string_of_dominoes = function
   |D(x, y)::l -> (string_of_int x)^"-"^(string_of_int y)^" "^( string_of_dominoes l)
 ;;
 
-let string_of_state = function
-  | ([], p) -> string_of_player(p) ^ " " 
-  | (x, p) -> string_of_player(p) ^ " " ^ string_of_dominoes(x)
+let string_of_state (x, p)= string_of_player(p) ^ " " ^ string_of_dominoes(x)
 ;;
  
  let string_of_chain = function
