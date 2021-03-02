@@ -1,16 +1,15 @@
-let read = ref read_line;
+let read = ref read_line;;
+
 let rec input_valid prompt is_valid cast =
   let rec urs () =
     let s = !read () in
     if is_valid s then cast s
     else
-      let () = print_endline "Réessayez!" in
-      urs ()
+      let () = print_endline "Réessayez!" in urs ()
   in
-  print_endline prompt; urs ()
-  ;;
+  print_endline prompt; urs ();;
   
- type domino = D of int * int;;
+type domino = D of int * int;;
 
 type chain = E | S of int * string * int;;
 
@@ -23,13 +22,13 @@ let flip (D (x,y)) =
 ;;
 
 let append (D (d1,d2), chain, char) = 
-let concaten = ((string_of_int d1)^"-"^ (string_of_int d2)) in
-  match (D (d1,d2), chain, char) with
-  | (D (d1,d2), E, _) -> S (d1, concaten, d2)
-  | (D (d1,_), S (_, str, fin), '<') -> S (d1, concaten ^ " " ^ str , fin)
-  | (D (_,d2), S (debut, str, _), '>') -> S (debut, str ^ " " ^ concaten , d2)
-  | (_,_,_) -> E
-;;
+  let domino = ((string_of_int d1)^"-"^ (string_of_int d2)) in
+    match (D (d1,d2), chain, char) with
+    | (D (d1,d2), E, _) -> S (d1, domino, d2)
+    | (D (d1,_), S (_, str, fin), '<') -> S (d1, domino ^ " " ^ str , fin)
+    | (D (_,d2), S (debut, str, _), '>') -> S (debut, str ^ " " ^ domino , d2)
+    | (_,_,_) -> E
+  ;;
   
  let string_of_player = function 
   | H n when (1 <= n && n <= 4)-> "Joueur " ^ (string_of_int n) ^ " (humain)"
@@ -45,11 +44,9 @@ let rec string_of_dominoes = function
 let string_of_state = function
   | ([], p) -> string_of_player(p) ^ " " 
   | (x, p) -> string_of_player(p) ^ " " ^ string_of_dominoes(x)
- ;;
+;;
  
  let string_of_chain = function
   | S (_, x, _) -> x
   | _ -> ""
- ;;
- 
-
+;;
