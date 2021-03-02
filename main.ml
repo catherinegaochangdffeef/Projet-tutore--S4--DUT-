@@ -102,8 +102,13 @@ type player = H of int | B of int;;
         | y -> urs (l @ [D(x,y)]) x (y-1)
       in urs [] x x;;
 
-     
-  (* get_hand_size *)
+  let get_hand_size = function
+    | 2 -> 7
+    | 3 -> 6
+    | 4 -> 6
+    | _ -> failwith "Entre 2 et 4 joueurs, please!"
+  ;;
+   
   (* make_state_list *)
 
 (* SECTION 5 : Jeu proprement dit *)
