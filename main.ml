@@ -60,14 +60,14 @@ type player = H of int | B of int;;
     if possible_dominoes lst chain = [] then 
       None 
     else 
-      let domino = select_domino(possible_dominoes lst chain) in
-        if List.length(legal_adds(domino) chain) = 1 then 
+      let domino = select_domino(possible_dominoes lst chain) in (*selectionner une possibilité parmi tous les possibilités possibles *)
+        if List.length(legal_adds(domino) chain) = 1 then (*si la possibilité de chaine S est 1 *)
           let () = print_endline ("Coup forcé : " ^ string_of_dominoes [domino]) in 
             Some(suppress domino lst,List.nth(legal_adds(domino) (chain)) 0)
-        else
+        else                                                   (*si la possibilité de chaine S est 2, on doit choisir une parmi deux *)
           match select_end(List.nth(legal_adds(domino)(chain))0)(List.nth(legal_adds(domino)(chain))1) with
           | S(a,b,c) -> Some(suppress domino lst,S(a,b,c))
-          | _-> None  
+          | _-> None             (* c'est pas obligatoire mais juste pour être sur *)
       ;;
   (* input_bot_move *)
   (* input_human_move *)
