@@ -50,21 +50,24 @@ type player = H of int | B of int;;
     in
     print_endline prompt; urs ();;
 
-  
+  (* TODO verifier les parenthèses et l'applications des fonctions *)
     let rec suppress c cd =
       match cd with
       |[]->[]
-      |h::t -> if c=h || flip(c)=h then t else h::(suppress c t)
+      |h::t -> if c = h || flip c = h then t else h :: suppress c t
 
   let input_move select_domino select_end chain lst = 
+    (* TODO faire un match*)
     if possible_dominoes lst chain = [] then 
+
       None 
     else 
       let domino = select_domino(possible_dominoes lst chain) in (*selectionner une possibilité parmi tous les possibilités possibles *)
         if List.length(legal_adds(domino) chain) = 1 then (*si la possibilité de chaine S est 1 *)
           let () = print_endline ("Coup forcé : " ^ string_of_dominoes [domino]) in 
             Some(suppress domino lst,List.nth(legal_adds(domino) (chain)) 0)
-        else                                                   (*si la possibilité de chaine S est 2, on doit choisir une parmi deux *)
+        else
+        (* TODO variables intermédiares + espaces pour la lisibilité (formatteur de code à utiliser) *)
           match select_end(List.nth(legal_adds(domino)(chain))0)(List.nth(legal_adds(domino)(chain))1) with
           | S(a,b,c) -> Some(suppress domino lst,S(a,b,c))
           | _-> None             (* c'est pas obligatoire mais juste pour être sur *)
@@ -90,7 +93,7 @@ type player = H of int | B of int;;
   (* move *)
 
   let rec string_of_dominoes = function 
-  |[] -> ""
+  |[] -> "" (* TODO sprintf pour les concaténations partout *)
   |D(x, y)::l -> String.trim((string_of_int x)^"-"^(string_of_int y)^" "^( string_of_dominoes l))
   ;;
 
@@ -131,10 +134,10 @@ type player = H of int | B of int;;
     | 4 -> 6
     | _ -> failwith "Entre 2 et 4 joueurs, please!"
   ;;
-   
+   (* TODO changer talon + tout en anglais *)
   let make_state_list string dominoes_list =
     let players_list = players_of_string string in 
-    let nb_players = List.length players_list in
+    let nb_players = List.length players_list in (* TODO playercount *)
     let number_domino_init = get_hand_size nb_players in
       let rec urs l1 nb_domino_init l2 iter_player result =
         match (take l1 nb_domino_init l2) with
