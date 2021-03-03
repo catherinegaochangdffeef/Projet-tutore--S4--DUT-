@@ -68,7 +68,7 @@ type player = H of int | B of int;;
   ;;
 
   let rec take l1 n l2 = 
-  match (l1, n, l2) with 
+    match (l1, n, l2) with 
     |(l1, n, []) -> (l1, [])
     |(l1, 0, l2) -> (l1, l2)
     |(l1, n, (D(x,y))::l) -> take ((D(x,y))::l1) (n-1) l
@@ -119,7 +119,16 @@ type player = H of int | B of int;;
     | _ -> failwith "Entre 2 et 4 joueurs, please!"
   ;;
    
-  (* make_state_list *)
+  let make_state_list string dominoes_list =
+    let players_list = players_of_string string in 
+    let nb_players = List.length players_list in
+    let number_domino_init = get_hand_size nb_players in
+      let rec urs l1 nb_domino_init l2 iter_player result =
+        match (take l1 nb_domino_init l2) with
+        | (l, talon) when iter_player = nb_players -> (l @ talon, result)
+        | (l, talon) -> urs [] nb_domino_init talon (iter_player+1) (result @ [(l, (List.nth players_list iter_player))] )
+      in urs [] number_domino_init dominoes_list 0 []
+;;
 
 (* SECTION 5 : Jeu proprement dit *)
   let string_of_chain = function
