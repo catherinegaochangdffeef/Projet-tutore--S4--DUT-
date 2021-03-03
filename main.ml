@@ -55,7 +55,20 @@ type player = H of int | B of int;;
       match cd with
       |[]->[]
       |h::t -> if c=h || flip(c)=h then t else h::(suppress c t)
-  (* input_move *)
+
+  let input_move select_domino select_end chain lst = 
+    if possible_dominoes lst chain = [] then 
+      None 
+    else 
+      let domino = select_domino(possible_dominoes lst chain) in
+        if List.length(legal_adds(domino) chain) = 1 then 
+          let () = print_endline ("Coup forcé : " ^ string_of_dominoes [domino]) in 
+            Some(suppress domino lst,List.nth(legal_adds(domino) (chain)) 0)
+        else
+          match select_end(List.nth(legal_adds(domino)(chain))0)(List.nth(legal_adds(domino)(chain))1) with
+          | S(a,b,c) -> Some(suppress domino lst,S(a,b,c))
+          | _-> None  
+      ;;
   (* input_bot_move *)
   (* input_human_move *)
 
