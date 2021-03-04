@@ -228,7 +228,7 @@ test
             )
         ]
     )
-    (*
+    
 ; Random.init 42
 ; test
     "move: vérifier l'effet de bord: affichage de la main et de 6-5 comme coup forcé"
@@ -246,7 +246,7 @@ test
     "move: pas de coup possible, prise de deux dominos dans la pioche"
     (lazy (move [D (1, 1); D (1, 2); D (1, 3)] (S (6, "6-1 1-5", 5)) [D (4, 4)] (B 4)))
     ([D (1, 3)], S (6, "6-1 1-5", 5), [D (1, 2); D (1, 1); D (4, 4)])
-*)
+
 ; test
     "players_of_string: construction d'une liste de 3 joueurs numérotés"
     (lazy (players_of_string "HBB"))
