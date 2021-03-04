@@ -1,5 +1,5 @@
 # Projet-tutore--S4--DUT-
-https://gist.github.com/laowantong/452e169d30efcda62ca069677ad62d08
+**Sujet** : https://gist.github.com/laowantong/452e169d30efcda62ca069677ad62d08
 ## Jeu de dominos en Ocaml
 
 Organisation des fonctions :
