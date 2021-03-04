@@ -78,8 +78,51 @@ type player = H of int | B of int;;
                             select_end (value 0) (value 1)
                         in 
                           Some (suppress domino lst, selected_chain);;
-  (* input_bot_move *)
-  (* input_human_move *)
+                          
+  let input_bot_move chain list =
+    match possible_dominoes list chain with
+    | [] -> None
+    | dominoes ->  let r1 = Random.int (List.length dominoes) in
+            let possibles_places = legal_adds (List.nth dominoes r1) chain in
+              match Random.int (List.length possibles_places) with
+              | 0 -> input_move (function l -> List.nth l r1) (fun _ dc2 -> dc2) chain list
+              | _ -> input_move (function l -> List.nth l r1) (fun dc1 _ -> dc1) chain list 
+  ;;
+  
+  let input_human_move chain list = 
+    let dominoes = possible_dominoes list chain in
+      if List.length dominoes = 0 then
+        input_move 
+          (function l -> failwith "Should not occur")
+          (fun dc1 dc2 -> failwith "Should not occur")
+          chain
+          list
+      else
+        input_valid 
+          "Sélectionner votre domino :" 
+          (function x -> let n = domino_of_string x in (List.mem n dominoes) = true)
+          (function x -> let chaines_possibles = (legal_adds (domino_of_string x) chain) in 
+            (input_valid
+              "A quel bout ?"
+              (function y ->  match (domino_of_string x) with
+                              | bon when (List.mem (append (bon, chain, y.[0])) chaines_possibles) = true -> let n2 = (append (bon, chain, y.[0])) in ((List.mem n2 chaines_possibles) = true)
+                              | dom -> let n2 = (append ((flip dom), chain, y.[0])) in ((List.mem n2 chaines_possibles) = true))
+              (function y ->  if y = "<" then
+                                input_move 
+                                  (function l -> List.nth l (find (domino_of_string x) dominoes))
+                                  (fun dc1 _ -> dc1)
+                                  chain
+                                  list
+                              else
+                                input_move 
+                                    (function l -> List.nth l (find (domino_of_string x) dominoes))
+                                    (fun _ dc2 -> dc2)
+                                    chain
+                                    list
+              ))
+          )
+  ;;
+
 
 (* SECTION 3 : Gestion complète d'un coup, avec affichages et pioche éventuelle *)
   
