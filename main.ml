@@ -36,7 +36,7 @@ type player = H of int | B of int;;
   let rec possible_dominoes lst cd =
     match lst with 
     |[]->[]
-    |dlst::rstlst-> if (legal_adds dlst cd)!=[] then dlst::(possible_dominoes rstlst cd) else possible_dominoes rstlst cd
+    |dlst::rstlst-> if legal_adds dlst cd!=[] then dlst::possible_dominoes rstlst cd else possible_dominoes rstlst cd
 ;;
 
 
@@ -57,24 +57,27 @@ type player = H of int | B of int;;
       |[]->[]
       |h::t -> if c = h || flip c = h then t else h :: suppress c t
   ;;
+
+  let rec string_of_dominoes = function 
+  | []                   -> ""
+  | D(x,y)::l when l = [] -> Printf.sprintf "%d-%d" x y
+  | D(x,y)::l             -> Printf.sprintf "%d-%d %s" x y (string_of_dominoes l)
+  ;;
   
   (* TODO déplacer input_move à la fin pour tester sur VS les fonctions (il ne connait pas string_of_dominoes par ex qui est définie plus loin) *)
-  let input_move select_domino select_end chain lst = 
-    (* TODO faire un match*)
-    if possible_dominoes lst chain = [] then 
-
-      None 
-    else 
-      let domino = select_domino(possible_dominoes lst chain) in (*selectionner une possibilité parmi tous les possibilités possibles *)
-        if List.length(legal_adds(domino) chain) = 1 then (*si la possibilité de chaine S est 1 *)
-          let () = print_endline ("Coup forcé : " ^ string_of_dominoes [domino]) in 
-            Some(suppress domino lst,List.nth(legal_adds(domino) (chain)) 0)
-        else
-        (* TODO variables intermédiares + espaces pour la lisibilité (formatteur de code à utiliser) *)
-          match select_end(List.nth(legal_adds(domino)(chain))0)(List.nth(legal_adds(domino)(chain))1) with
-          | S(a,b,c) -> Some(suppress domino lst,S(a,b,c))
-          | _-> None             (* c'est pas obligatoire mais juste pour être sur *)
-      ;;
+ let input_move select_domino select_end chain lst = 
+    match possible_dominoes lst chain with
+    | [] -> None
+    | l ->  let domino = select_domino l in
+              let possible_chains = (legal_adds domino chain) in 
+                match List.length (possible_chains) with
+                | 1 -> let () = print_endline ("Coup forcé : " ^ string_of_dominoes [domino]) in 
+                          Some (suppress domino lst, List.nth possible_chains 0)
+                | _ -> let selected_chain = 
+                          let value = (List.nth (possible_chains)) in
+                            select_end (value 0) (value 1)
+                        in 
+                          Some (suppress domino lst, selected_chain);;
   (* input_bot_move *)
   (* input_human_move *)
 
