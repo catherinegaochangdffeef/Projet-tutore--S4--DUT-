@@ -1,11 +1,11 @@
 let read = ref read_line;;
-  
+
 type domino = D of int * int;;
 
 type chain = E | S of int * string * int;;
 
 type player = H of int | B of int;;
- 
+
 (* SECTION 1 : Gestion des coups légaux *)
   let flip (D (x,y)) = 
     D (y,x)
@@ -18,26 +18,26 @@ type player = H of int | B of int;;
       | (D (d1,_), S (_, str, rightchain), '<') -> S (d1, domino ^ " " ^ str , rightchain)
       | (D (_,d2), S (leftchain, str, _), '>') -> S (leftchain, str ^ " " ^ domino , d2)
       | (_,_,_) -> E
-    ;;
+  ;;
 
   let legal_adds c cd = 
-  match cd with 
-  |E->(append(c,E,'>'))::[]
-  |S(x,y,z)->match c with 
-    |D(a,b) when (b=x && a=z) && a!=b -> append(c,cd,'<') :: append(c,cd,'>') ::[]
-    |D(a,b) when (a=x && b=z) && a!=b -> append(flip c, cd,'<') :: append(flip c, cd,'>') ::[]
-    |D(a,b) when b = x -> append(c,cd,'<')::[]
-    |D(a,b) when a = x -> append(flip c,cd,'<')::[]
-    |D(a,b) when a = z -> append(c,cd,'>')::[]
-    |D(a,b) when b = z -> append(flip c, cd,'>')::[]
-    |_ -> []
+    match cd with 
+    |E->(append(c,E,'>'))::[]
+    |S(x,y,z)->match c with 
+      |D(a,b) when (b=x && a=z) && a!=b -> append(c,cd,'<') :: append(c,cd,'>') ::[]
+      |D(a,b) when (a=x && b=z) && a!=b -> append(flip c, cd,'<') :: append(flip c, cd,'>') ::[]
+      |D(a,b) when b = x -> append(c,cd,'<')::[]
+      |D(a,b) when a = x -> append(flip c,cd,'<')::[]
+      |D(a,b) when a = z -> append(c,cd,'>')::[]
+      |D(a,b) when b = z -> append(flip c, cd,'>')::[]
+      |_ -> []
   ;;
 
   let rec possible_dominoes lst cd =
     match lst with 
     |[]->[]
     |dlst::rstlst-> if legal_adds dlst cd!=[] then dlst::possible_dominoes rstlst cd else possible_dominoes rstlst cd
-;;
+  ;;
 
 
 (* SECTION 2 : Sélection du coup à jouer et calcul du résultat *)
@@ -45,11 +45,11 @@ type player = H of int | B of int;;
   let rec input_valid prompt is_valid cast =
     let rec urs () =
       let s = !read () in
-      if is_valid s then cast s
-      else
-        let () = print_endline "Réessayez!" in urs ()
-    in
-    print_endline prompt; urs ();;
+        if is_valid s 
+          then cast s
+        else
+          let () = print_endline "Réessayez!" in urs () in
+            print_endline prompt; urs ();;
 
   (* TODO verifier les parenthèses et l'applications des fonctions *)
     let rec suppress c cd =
@@ -69,24 +69,23 @@ type player = H of int | B of int;;
     match possible_dominoes lst chain with
     | [] -> None
     | l ->  let domino = select_domino l in
-              let possible_chains = (legal_adds domino chain) in 
-                match List.length (possible_chains) with
-                | 1 -> let () = print_endline ("Coup forcé : " ^ string_of_dominoes [domino]) in 
-                          Some (suppress domino lst, List.nth possible_chains 0)
-                | _ -> let selected_chain = 
-                          let value = (List.nth (possible_chains)) in
-                            select_end (value 0) (value 1)
-                        in 
-                          Some (suppress domino lst, selected_chain);;
+      let possible_chains = (legal_adds domino chain) in 
+        match List.length (possible_chains) with
+        | 1 -> let () = print_endline ("Coup forcé : " ^ string_of_dominoes [domino]) in 
+          Some (suppress domino lst, List.nth possible_chains 0)
+        | _ -> let selected_chain = 
+          let value = (List.nth (possible_chains)) in 
+            select_end (value 0) (value 1) in 
+              Some (suppress domino lst, selected_chain);;
                           
   let input_bot_move chain list =
     match possible_dominoes list chain with
     | [] -> None
     | dominoes ->  let r1 = Random.int (List.length dominoes) in
-            let possibles_places = legal_adds (List.nth dominoes r1) chain in
-              match Random.int (List.length possibles_places) with
-              | 0 -> input_move (function l -> List.nth l r1) (fun _ dc2 -> dc2) chain list
-              | _ -> input_move (function l -> List.nth l r1) (fun dc1 _ -> dc1) chain list 
+      let possibles_places = legal_adds (List.nth dominoes r1) chain in
+        match Random.int (List.length possibles_places) with
+        | 0 -> input_move (function l -> List.nth l r1) (fun _ dc2 -> dc2) chain list
+        | _ -> input_move (function l -> List.nth l r1) (fun dc1 _ -> dc1) chain list 
   ;;
 
   let domino_of_string saisie = 
@@ -96,12 +95,14 @@ type player = H of int | B of int;;
   let rec find x lst =
     match lst with
     | [] -> -1
-    | h :: t -> if x = h then 
-                  0 
-                else 
-                  1 + find x t
+    | h :: t -> 
+        if x = h 
+          then 0 
+        else
+          1 + find x t
   ;;
   
+  (*TODO identer la fonction please*)
   let input_human_move chain list = 
     let dominoes = possible_dominoes list chain in
       if List.length dominoes = 0 then
@@ -118,11 +119,11 @@ type player = H of int | B of int;;
             (input_valid
               "A quel bout ?"
               (function y ->  match (domino_of_string x) with
-                              | bon when (List.mem (append (bon, chain, y.[0])) chaines_possibles) = true -> let n2 = (append (bon, chain, y.[0])) in ((List.mem n2 chaines_possibles) = true)
-                              | dom -> let n2 = (append ((flip dom), chain, y.[0])) in ((List.mem n2 chaines_possibles) = true))
-              (function y ->  if y = "<" then
-                                input_move 
-                                  (function l -> List.nth l (find (domino_of_string x) dominoes))
+                | bon when (List.mem (append (bon, chain, y.[0])) chaines_possibles) = true -> let n2 = (append (bon, chain, y.[0])) in ((List.mem n2 chaines_possibles) = true)
+                | dom -> let n2 = (append ((flip dom), chain, y.[0])) in ((List.mem n2 chaines_possibles) = true))
+              (function y ->  if y = "<"
+                 then input_move 
+                  (function l -> List.nth l (find (domino_of_string x) dominoes))
                                   (fun dc1 _ -> dc1)
                                   chain
                                   list
@@ -143,7 +144,7 @@ type player = H of int | B of int;;
     | H n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (humain)" n
     | B n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (bot)   " n 
     | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
-    ;;
+  ;;
 
   let rec take l1 n l2 = 
     match (l1, n, l2) with 
@@ -164,8 +165,8 @@ type player = H of int | B of int;;
 
   let char_list_of_string str =
     let rec urs n l =
-      if n < 0 then 
-        l 
+      if n < 0 
+        then l 
       else 
         urs (n-1) (str.[n]::l) 
     in urs (String.length str - 1) []
@@ -195,14 +196,14 @@ type player = H of int | B of int;;
 
   let make_state_list string dominoes_list =
     let players_list = players_of_string string in 
-    let playercount = List.length players_list in
-    let number_domino_init = get_hand_size playercount in
-      let rec urs l1 nb_domino_init l2 iter_player result =
-        match (take l1 nb_domino_init l2) with
-        | (l, stack) when iter_player = playercount -> (l @ stack, result)
-        | (l, stack) -> urs [] nb_domino_init stack (iter_player+1) (result @ [(l, (List.nth players_list iter_player))] )
-      in urs [] number_domino_init dominoes_list 0 []
-;;
+      let playercount = List.length players_list in
+        let number_domino_init = get_hand_size playercount in
+          let rec urs l1 nb_domino_init l2 iter_player result =
+            match (take l1 nb_domino_init l2) with
+            | (l, stack) when iter_player = playercount -> (l @ stack, result)
+            | (l, stack) -> urs [] nb_domino_init stack (iter_player+1) (result @ [(l, (List.nth players_list iter_player))] )
+              in urs [] number_domino_init dominoes_list 0 []
+  ;;
 
 (* SECTION 5 : Jeu proprement dit *)
   let string_of_chain = function
@@ -210,20 +211,19 @@ type player = H of int | B of int;;
     | _ -> ""
   ;;
 
-let string_of_player = function 
-  | H n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (humain)" n
-  | B n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (bot)   " n 
-  | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
+  let string_of_player = function 
+    | H n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (humain)" n
+    | B n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (bot)   " n 
+    | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
   ;;
 
-let string_of_state (x, p)= Printf.sprintf"%s:\t%s" (string_of_player p) (string_of_dominoes x)
-let string_of_state (x, p)= Printf.sprintf"%s:\t%s" (string_of_player p) (string_of_dominoes x)
+  let string_of_state (x, p)= Printf.sprintf"%s:\t%s" (string_of_player p) (string_of_dominoes x)
   ;;
   
- let list_shuffle ls =
+  let list_shuffle ls =
     let x = List.map (function y -> (Random.bits (), y)) ls in
       let comparList = List.sort compare x in
         List.map snd comparList
- ;;       
+  ;;       
 
   (* play *)
