@@ -57,6 +57,7 @@ type player = H of int | B of int;;
       |[]->[]
       |h::t -> if c = h || flip c = h then t else h :: suppress c t
   ;;
+  
   (* TODO déplacer input_move à la fin pour tester sur VS les fonctions (il ne connait pas string_of_dominoes par ex qui est définie plus loin) *)
   let input_move select_domino select_end chain lst = 
     (* TODO faire un match*)
@@ -80,10 +81,10 @@ type player = H of int | B of int;;
 (* SECTION 3 : Gestion complète d'un coup, avec affichages et pioche éventuelle *)
   
   let string_of_player = function 
-  | H n when (1 <= n && n <= 4)-> "Joueur " ^ (string_of_int n) ^ " (humain)"
-  | B n when (1 <= n && n <= 4)-> "Joueur " ^ (string_of_int n) ^ " (bot)   "
-  | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
-  ;;
+    | H n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (humain)" n
+    | B n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (bot)   " n 
+    | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
+    ;;
 
   let rec take l1 n l2 = 
     match (l1, n, l2) with 
@@ -95,8 +96,9 @@ type player = H of int | B of int;;
   (* move *)
 
   let rec string_of_dominoes = function 
-  |[] -> "" (* TODO sprintf pour les concaténations partout *)
-  |D(x, y)::l -> String.trim((string_of_int x)^"-"^(string_of_int y)^" "^( string_of_dominoes l))
+  | []                   -> ""
+  | D(x,y)::l when l = [] -> Printf.sprintf "%d-%d" x y
+  | D(x,y)::l             -> Printf.sprintf "%d-%d %s" x y (string_of_dominoes l)
   ;;
 
 (* SECTION 4 : Mise en place d'une partie *)
@@ -149,7 +151,14 @@ type player = H of int | B of int;;
     | _ -> ""
   ;;
 
-  let string_of_state (x, p)= string_of_player(p) ^ ":\t" ^ string_of_dominoes(x)
+let string_of_player = function 
+  | H n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (humain)" n
+  | B n when (1 <= n && n <= 4)-> Printf.sprintf"Joueur %d (bot)   " n 
+  | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
+  ;;
+
+let string_of_state (x, p)= Printf.sprintf"%s:\t%s" (string_of_player p) (string_of_dominoes x)
+let string_of_state (x, p)= Printf.sprintf"%s:\t%s" (string_of_player p) (string_of_dominoes x)
   ;;
   
  let list_shuffle ls =
