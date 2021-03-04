@@ -88,6 +88,19 @@ type player = H of int | B of int;;
               | 0 -> input_move (function l -> List.nth l r1) (fun _ dc2 -> dc2) chain list
               | _ -> input_move (function l -> List.nth l r1) (fun dc1 _ -> dc1) chain list 
   ;;
+
+  let domino_of_string saisie = 
+    D(int_of_char saisie.[0] - 48, int_of_char saisie.[1] - 48)
+  ;;
+  
+  let rec find x lst =
+    match lst with
+    | [] -> -1
+    | h :: t -> if x = h then 
+                  0 
+                else 
+                  1 + find x t
+  ;;
   
   let input_human_move chain list = 
     let dominoes = possible_dominoes list chain in
