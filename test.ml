@@ -1,5 +1,5 @@
-open Main (* if we use the ocaml compiler we have to use this with the compile code : "ocamlc -o nameofexe main.ml test.ml" *)
-(* #use "main.ml" *) (* #use can be use only in toplevel, not when we compil *)
+(*open Main if we use the ocaml compiler we have to use this with the compile code : "ocamlc -o nameofexe main.ml test.ml" *)
+#use "main.ml"  (* #use can be use only in toplevel, not when we compil *)
 
 let nb_tests_ok = ref 0;;
 let nb_tests = ref 0;;
@@ -25,11 +25,11 @@ test
     "append: aucun contrôle n'est fait sur la compatibilité du domino poussé"
     (lazy (append (D (5, 2), S (1, "1-2 4-3", 3), '<')))
     (S (5, "5-2 1-2 4-3", 3))
-(* ; test
+; test
     "char_list_of_string: conversion d'une chaîne non vide en liste de caractères"
     (lazy (char_list_of_string "foobar"))
-    ['f';'o';'o';'b';'a';'r'] *)
-(* ; test
+    ['f';'o';'o';'b';'a';'r']
+ ; test
     "char_list_of_string: conversion d'une vide en liste vide"
     (lazy (char_list_of_string ""))
     []
@@ -53,6 +53,7 @@ test
     "get_hand_size: trois joueurs reçoivent chacun une main de six dominos"
     (lazy (get_hand_size 3))
     6
+    (*
 ; Random.init 42
 ; test
     "input_bot_move: vérifier l'effet de bord: affichage de 6-5 comme coup forcé"
@@ -76,7 +77,7 @@ test
     (lazy (input_human_move
             (S (6, "6-1 1-4", 4))
             [D (1, 2); D (6, 5); D (6, 4)]))
-    (Some ([D (1, 2); D (6, 5)], S (6, "6-1 1-4 4-6", 6)))
+    (Some ([D (1, 2); D (6, 5)], S (6, "6-1 1-4 4-6", 6))) *)
 ; Random.init 42
 ; test
     "input_move: pas de domino possible, les fonctions de sélection sont inutilisées"
@@ -142,6 +143,7 @@ test
             (S (6, "6-1 1-4", 4))
             [D (1, 2); D (6, 5); D (6, 4)]))
     (Some ([D (1, 2); D (6, 5)], S (6, "6-1 1-4 4-6", 6)))
+
 ; read := (let x = Stream.of_list ["-10"; "500"; "10"] in function () -> Stream.next x)
 ; test
     "input_valid: simulation de la saisie jusqu'à validité d'un âge réaliste"
@@ -208,6 +210,7 @@ test
     "make_dominoes: de (0,0) à (3,3)"
     (lazy (make_dominoes 3))
     [D (3, 3); D (3, 2); D (3, 1); D (3, 0); D (2, 2); D (2, 1); D (2, 0); D (1, 1); D (1, 0); D (0, 0)]
+
 ; Random.init 42
 ; test
     "make_state_list: création d'un jeu à deux joueurs à partir d'une liste de dominos non mélangée"
@@ -225,6 +228,7 @@ test
             )
         ]
     )
+    (*
 ; Random.init 42
 ; test
     "move: vérifier l'effet de bord: affichage de la main et de 6-5 comme coup forcé"
@@ -242,6 +246,7 @@ test
     "move: pas de coup possible, prise de deux dominos dans la pioche"
     (lazy (move [D (1, 1); D (1, 2); D (1, 3)] (S (6, "6-1 1-5", 5)) [D (4, 4)] (B 4)))
     ([D (1, 3)], S (6, "6-1 1-5", 5), [D (1, 2); D (1, 1); D (4, 4)])
+*)
 ; test
     "players_of_string: construction d'une liste de 3 joueurs numérotés"
     (lazy (players_of_string "HBB"))
@@ -345,5 +350,5 @@ test
 ; test
     "take: passage de zéro dominos du talon à la main"
     (lazy (take [D (1, 1); D (2, 2)] 0 [D (3, 3); D (4, 4); D (5, 6)]))
-    ([D (1, 1); D (2, 2)], [D (3, 3); D (4, 4); D (5, 6)]) *)
+    ([D (1, 1); D (2, 2)], [D (3, 3); D (4, 4); D (5, 6)]) 
 ; print_endline (Printf.sprintf "Succès: %d%% de %d tests" (100 * !nb_tests_ok / !nb_tests) !nb_tests)

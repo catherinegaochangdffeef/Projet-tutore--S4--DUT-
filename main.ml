@@ -15,8 +15,8 @@ type player = H of int | B of int;;
     let domino = ((string_of_int d1)^"-"^ (string_of_int d2)) in
       match (D (d1,d2), chain, char) with
       | (D (d1,d2), E, _) -> S (d1, domino, d2)
-      | (D (d1,_), S (_, str, fin), '<') -> S (d1, domino ^ " " ^ str , fin)
-      | (D (_,d2), S (debut, str, _), '>') -> S (debut, str ^ " " ^ domino , d2)
+      | (D (d1,_), S (_, str, rightchain), '<') -> S (d1, domino ^ " " ^ str , rightchain)
+      | (D (_,d2), S (leftchain, str, _), '>') -> S (leftchain, str ^ " " ^ domino , d2)
       | (_,_,_) -> E
     ;;
 
@@ -24,19 +24,20 @@ type player = H of int | B of int;;
   match cd with 
   |E->(append(c,E,'>'))::[]
   |S(x,y,z)->match c with 
-      |D(a,b) when(b=x && a=z)&& a!=b ->append(c,cd,'<')::append(c,cd,'>')::[]
-      |D(a,b) when (a=x && b=z)&&a!=b -> append(flip c, cd,'<')::append(flip c, cd,'>')::[]
-      |D(a,b) when b=x -> append(c,cd,'<')::[]
-      |D(a,b) when a=x -> append(flip c,cd,'<')::[]
-      |D(a,b) when a = z -> append(c,cd,'>')::[]
-      |D(a,b) when b=z -> append(flip c, cd,'>')::[]
-      |_->[];;
+    |D(a,b) when (b=x && a=z) && a!=b -> append(c,cd,'<') :: append(c,cd,'>') ::[]
+    |D(a,b) when (a=x && b=z) && a!=b -> append(flip c, cd,'<') :: append(flip c, cd,'>') ::[]
+    |D(a,b) when b = x -> append(c,cd,'<')::[]
+    |D(a,b) when a = x -> append(flip c,cd,'<')::[]
+    |D(a,b) when a = z -> append(c,cd,'>')::[]
+    |D(a,b) when b = z -> append(flip c, cd,'>')::[]
+    |_ -> []
+  ;;
 
-   let rec possible_dominoes lst cd =
-   match lst with 
-   |[]->[]
-   |dlst::rstlst-> if (legal_adds dlst cd)!=[] then dlst::(possible_dominoes rstlst cd) else possible_dominoes rstlst cd
-
+  let rec possible_dominoes lst cd =
+    match lst with 
+    |[]->[]
+    |dlst::rstlst-> if (legal_adds dlst cd)!=[] then dlst::(possible_dominoes rstlst cd) else possible_dominoes rstlst cd
+;;
 
 
 (* SECTION 2 : Sélection du coup à jouer et calcul du résultat *)
@@ -55,7 +56,8 @@ type player = H of int | B of int;;
       match cd with
       |[]->[]
       |h::t -> if c = h || flip c = h then t else h :: suppress c t
-
+  ;;
+  (* TODO déplacer input_move à la fin pour tester sur VS les fonctions (il ne connait pas string_of_dominoes par ex qui est définie plus loin) *)
   let input_move select_domino select_end chain lst = 
     (* TODO faire un match*)
     if possible_dominoes lst chain = [] then 
@@ -116,12 +118,12 @@ type player = H of int | B of int;;
     in urs [] 0 (char_list_of_string str);;
   
   let make_dominoes x =
-      let rec urs l x = 
-        function
-        | 0 when x=0 -> (l @ [D(0,0)])
-        | 0 -> urs (l @ [D(x,0)]) (x-1) (x-1)
-        | y -> urs (l @ [D(x,y)]) x (y-1)
-      in urs [] x x;;
+    let rec urs l x = function
+      | 0 when x=0 -> (l @ [D(0,0)])
+      | 0 -> urs (l @ [D(x,0)]) (x-1) (x-1)
+      | y -> urs (l @ [D(x,y)]) x (y-1)
+    in urs [] x x
+  ;;
 
   let get_hand_size = function
     | 2 -> 7
@@ -129,15 +131,15 @@ type player = H of int | B of int;;
     | 4 -> 6
     | _ -> failwith "Entre 2 et 4 joueurs, please!"
   ;;
-   (* TODO changer talon + tout en anglais *)
+
   let make_state_list string dominoes_list =
     let players_list = players_of_string string in 
-    let nb_players = List.length players_list in (* TODO playercount *)
-    let number_domino_init = get_hand_size nb_players in
+    let playercount = List.length players_list in
+    let number_domino_init = get_hand_size playercount in
       let rec urs l1 nb_domino_init l2 iter_player result =
         match (take l1 nb_domino_init l2) with
-        | (l, talon) when iter_player = nb_players -> (l @ talon, result)
-        | (l, talon) -> urs [] nb_domino_init talon (iter_player+1) (result @ [(l, (List.nth players_list iter_player))] )
+        | (l, stack) when iter_player = playercount -> (l @ stack, result)
+        | (l, stack) -> urs [] nb_domino_init stack (iter_player+1) (result @ [(l, (List.nth players_list iter_player))] )
       in urs [] number_domino_init dominoes_list 0 []
 ;;
 
@@ -147,7 +149,7 @@ type player = H of int | B of int;;
     | _ -> ""
   ;;
 
- let string_of_state (x, p)= string_of_player(p) ^ ":\t" ^ string_of_dominoes(x)
+  let string_of_state (x, p)= string_of_player(p) ^ ":\t" ^ string_of_dominoes(x)
   ;;
   
  let list_shuffle ls =
