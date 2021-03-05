@@ -2,6 +2,17 @@
 **Sujet** : https://gist.github.com/laowantong/452e169d30efcda62ca069677ad62d08
 ## Jeu de dominos en Ocaml
 
+## Installation et exécution:   
+Pour exécuter la programme, il y a deux solution:  
+1.Jupyter  
+2.Local Ocaml   
+  Ouvrir Ubuntu sous Windows(WSL 2 installé) t  
+  Tapez code . pour ouvrir VsCode Studio   
+  Accède à votre fichier dans le terminal, n'oublie pas mnt  
+  Par exemple: /mnt/d/SoftWare/Projet  
+  Pour exécuter : tapez ocaml tests.ml ou (ocamlc -o test main.ml tests.ml       
+                                          ./test)  
+  
 Organisation des fonctions :
 
 ### 1. Gestion des coups légaux
