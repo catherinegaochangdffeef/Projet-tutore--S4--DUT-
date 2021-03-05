@@ -75,7 +75,6 @@ type player = H of int | B of int;;
   | D(x,y)::l             -> Printf.sprintf "%d-%d %s" x y (string_of_dominoes l)
   ;;
   
-  (* TODO déplacer input_move à la fin pour tester sur VS les fonctions (il ne connait pas string_of_dominoes par ex qui est définie plus loin) *)
  let input_move select_domino select_end chain lst = 
     match possible_dominoes lst chain with
     | [] -> None
@@ -115,7 +114,6 @@ type player = H of int | B of int;;
           1 + find x t
   ;;
   
-  (*TODO identer la fonction please*)
   let input_human_move chain list = 
     let list_dominoes = possible_dominoes list chain in
       match List.length list_dominoes with
@@ -125,7 +123,7 @@ type player = H of int | B of int;;
                 chain
                 list
       | _ ->  input_valid 
-                "Sélectionner votre domino :" 
+                "Quel domino voulez-vous poser ?" 
                 (function str -> let domino = domino_of_string str in (List.mem domino list_dominoes) = true)
                 (function str -> let domino = domino_of_string str in 
                   let possible_chains = (legal_adds (domino) chain) in 
@@ -157,6 +155,8 @@ type player = H of int | B of int;;
 
 
 (* SECTION 3 : Gestion complète d'un coup, avec affichages et pioche éventuelle *)
+
+(*La fonction string_of_dominoes a été placée dans la section 2 pour pouvoir s'en servir dans la fonction input_move*)
   
   let string_of_player = function 
     | H n when (1 <= n && n <= 4) -> Printf.sprintf"Joueur %d (humain)" n
@@ -171,7 +171,24 @@ type player = H of int | B of int;;
     |(l1, n, (D(x,y))::l) -> take ((D(x,y))::l1) (n-1) l
   ;;
   
-  (* move *)
+  let rec move stack chain hand player =
+    let () = print_endline(string_of_player player) in 
+      let () = print_endline( "main: " ^ (string_of_dominoes hand)) in
+        if List.length (possible_dominoes hand chain) = 0 then
+          let () = print_endline ("Aucun coup possible") in 
+          match List.length stack with
+          | 0 -> (stack, chain, hand)
+          | 1 -> let (n_hand, n_stack) = (take hand 1 stack) in (n_stack, chain, n_hand)
+          | _ -> let (n_hand, n_stack) = (take hand 2 stack) in (n_stack, chain, n_hand)
+        else
+          match player with
+          | H (_) ->  (match input_human_move chain hand with
+                      | Some (n_hand, n_chain) -> (stack, n_chain, n_hand)
+                      | _ -> (stack, chain, hand))
+          | B (_) ->  (match input_bot_move chain hand with
+                      | Some (n_hand, n_chain) -> (stack, n_chain, n_hand)
+                      | _ -> (stack, chain, hand))
+  ;;
 
   
 
@@ -223,12 +240,6 @@ type player = H of int | B of int;;
   let string_of_chain = function
     | S (_, str, _) -> str
     | _             -> ""
-  ;;
-
-  let string_of_player = function 
-    | H n when (n >= 1 && n <= 4)-> Printf.sprintf "Joueur %d (humain)" n
-    | B n when (n >= 1 && n <= 4)-> Printf.sprintf "Joueur %d (bot)   " n 
-    | _ -> failwith "Le joueur doit etre un nombre en 1 et 4"
   ;;
 
   let string_of_state (dominoes_list, player)= Printf.sprintf "%s:\t%s" (string_of_player player) (string_of_dominoes dominoes_list)
