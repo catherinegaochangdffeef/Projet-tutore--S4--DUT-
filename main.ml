@@ -1,4 +1,4 @@
-let read = ref read_line;;
+let read = ref read_line;; (* la fichier contient tous les fonctions pour jeu domino*)
 
 type domino = D of int * int;;
 

@@ -1,4 +1,4 @@
-#use "main.ml"
+#use "main.ml" (le fichier pour vérifier si tous les fonctions marchent correctement)
 let nb_tests_ok = ref 0;;
 let nb_tests = ref 0;;
 let test label expected calculated =
