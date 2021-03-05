@@ -192,6 +192,24 @@ type player = H of int | B of int;;
 
   
 
+  let rec move stack chain hand player =
+    let () = print_endline(string_of_player player) in 
+      let () = print_endline( "main: " ^ (string_of_dominoes hand)) in
+        if List.length (possible_dominoes hand chain) = 0 then
+          let () = print_endline ("Aucun coup possible") in 
+          match List.length stack with
+          | 0 -> (stack, chain, hand)
+          | 1 -> let (n_hand, n_stack) = (take hand 1 stack) in (n_stack, chain, n_hand)
+          | _-> let (n_hand, n_stack) = (take hand 2 stack) in (n_stack, chain, n_hand)
+        else
+          match player with
+          | H (_) ->  (match input_human_move chain hand with
+                      | Some (n_hand, n_chain) -> (stack, n_chain, n_hand)
+                      | _-> (stack, chain, hand))
+          | B (_) ->  (match input_bot_move chain hand with
+                      | Some (n_hand, n_chain) -> (stack, n_chain, n_hand)
+                      | _-> (stack, chain, hand))
+  ;;
 (* SECTION 4 : Mise en place d'une partie *)
 
   let char_list_of_string str =
