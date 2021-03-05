@@ -252,3 +252,45 @@ type player = H of int | B of int;;
   ;;       
 
   (* play *)
+  let play dominoes_count players_str = 
+    (* final local variables*)
+    let dominoes_list = list_shuffle (make_dominoes dominoes_count) in
+    let nb_players = List.length (players_of_string players_str) in
+    let replace l pos a  = List.mapi (fun i x -> if i = pos then a else x) l in
+      (* Print when it's the first turn players whith their hand *)
+      let () =
+        let rec aff_state n str =
+          if (n = List.length (snd (make_state_list players_str dominoes_list))) then 
+            print_endline str
+          else
+            let () = print_endline(string_of_state (List.nth (snd (make_state_list players_str dominoes_list)) n)) in  aff_state (n+1) str
+        in aff_state 0 ""
+      in 
+  
+      (* Start of the turn *)
+      let rec turn game chain count t_passed = 
+        if t_passed = nb_players then
+          print_endline "\tMatch nul"
+        else 
+          (* Get the stack and the current player who is playing with his hand . Print his hand*)
+          let (stack, state_of_players) = game in
+          let (hand_current_player, current_player) = List.nth state_of_players (count mod nb_players) in
+          
+          (* Get the new state of the game after the player played. Replace the new values in the tab "state_of_players"*)
+          let (n_stack, n_chain, n_hand) = move stack chain hand_current_player current_player in
+            if List.length n_hand = 0 then
+              print_endline ("\n" ^ string_of_player current_player ^ " a gagné !")
+            else
+              let () = print_endline ("\tchaîne : " ^ string_of_chain n_chain) in
+              let changed_state_of_players = replace state_of_players (count mod nb_players) (n_hand, current_player) in
+            
+            (* If there were no dominoes in the stack and the new state of the game hasn't changed so he didn't played. Else he played *)
+            if List.length stack = 0 then
+              if (n_stack = stack) && (n_chain = chain) && (n_hand = hand_current_player) then
+                turn game chain (count+1) (t_passed+1)
+              else 
+                turn (n_stack, changed_state_of_players) n_chain (count+1) 0
+            else
+                turn (n_stack, changed_state_of_players) n_chain (count+1) 0
+  
+      in turn (make_state_list players_str dominoes_list) E 0 0        
